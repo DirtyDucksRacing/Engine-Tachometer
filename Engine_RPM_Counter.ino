@@ -6,12 +6,14 @@
 #define engineEncoderInterruptPin 0
 #define messageInterval_millis 500
 
+long rpm;
+long count;
 long enginePulseCount;
 long timeToSendMessage;
 long timer; 
 
 void engineInterruptFunction(){
-  Serial.println(pow(micros()-timer, -1)*60000000);
+  rpm+= pow(micros()-timer, -1)*60000000;count++;
   timer = micros();
 }
 
@@ -20,9 +22,16 @@ void setup() {
   attachInterrupt(engineEncoderInterruptPin, engineInterruptFunction, RISING);
   Serial.begin(115200); // BAUD rate for Serial Communication
   enginePulseCount = 0;
+  count = 0; rpm = 0;
   timeToSendMessage = millis() + messageInterval_millis;
   timer = millis(); 
 }
 
 void loop() {
+  if(millis()>timeToSendMessage){
+    Serial.println(rpm/count);
+    rpm=0;
+    count=0;
+    timeToSendMessage = millis()+messageInterval_millis;
+  }
 }
