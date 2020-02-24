@@ -8,9 +8,11 @@
 
 long enginePulseCount;
 long timeToSendMessage;
+long timer; 
 
 void engineInterruptFunction(){
-  enginePulseCount++;
+  Serial.println(pow(micros()-timer, -1)*60000000);
+  timer = micros();
 }
 
 void setup() {
@@ -19,14 +21,8 @@ void setup() {
   Serial.begin(115200); // BAUD rate for Serial Communication
   enginePulseCount = 0;
   timeToSendMessage = millis() + messageInterval_millis;
+  timer = millis(); 
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  if(millis()>timeToSendMessage){
-    Serial.println(enginePulseCount*60*1000/messageInterval_millis);
-    enginePulseCount = 0;
-    timeToSendMessage = millis()+ messageInterval_millis;
-  }
-  
 }
